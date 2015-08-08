@@ -16,10 +16,11 @@ var watchify = require('watchify');
 var babel = require('babelify');
 
 function compile(watch) {
-  var bundler = watchify(browserify('./www/index.js', { debug: true }).transform(babel));
+  var bundler = watchify(browserify('./www/index.js', { debug: true, extensions: ['.jade'] }).transform(babel).transform(require('jadeify')));
 
   function rebundle() {
-    bundler.bundle()
+    bundler
+      .bundle()
       .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('index.js'))
       .pipe(buffer())

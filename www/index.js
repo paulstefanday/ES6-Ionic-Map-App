@@ -1,7 +1,4 @@
-require('./js/controllers');
-require('./js/directives');
-
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives'])
+angular.module('starter', ['ionic'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -10,3 +7,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.directives']
     }
   });
 })
+
+.controller(...require('./js/components/map'))
+.directive(...require('./js/directives/map'))
+.directive(...require('./js/directives/test'))
+;
