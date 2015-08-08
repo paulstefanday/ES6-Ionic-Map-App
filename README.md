@@ -1,6 +1,17 @@
 # Cycle Map
 Simple accident recording tool
 
+### Tech
+- Gulp
+- Browserify
+- Jade
+- Babel
+- Angular
+- Google Maps
+- Ionic
+- JWT
+
+
 ### Local Setup
 1. gulp js
 2. ionic serve
