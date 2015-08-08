@@ -257,27 +257,96 @@ exports.DebugItem = function DebugItem(lineno, filename) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
 },{"fs":1}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function (app) {
+
+  app.run(function ($ionicPlatform) {
+    $ionicPlatform.ready(function () {
+      if (window.StatusBar) StatusBar.styleDefault();
+    });
+  });
+};
+
+module.exports = exports["default"];
+
+},{}],4:[function(require,module,exports){
 'use strict';
 
-var _angular$module$run$controller$directive, _angular$module$run$controller, _angular$module$run;
+var _app$config;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-(_angular$module$run$controller$directive = (_angular$module$run$controller = (_angular$module$run = angular.module('starter', ['ionic']).run(function ($ionicPlatform) {
-  $ionicPlatform.ready(function () {
-    if (window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
-})).controller.apply(_angular$module$run, _toConsumableArray(require('./js/components/map')))).directive.apply(_angular$module$run$controller, _toConsumableArray(require('./js/directives/map')))).directive.apply(_angular$module$run$controller$directive, _toConsumableArray(require('./js/directives/test')));
+var app = angular.module('map', ['ionic']);
+require('./config')(app);
 
-},{"./js/components/map":4,"./js/directives/map":5,"./js/directives/test":6}],4:[function(require,module,exports){
+(_app$config = app.config(function ($stateProvider, $urlRouterProvider) {
+
+	$urlRouterProvider.otherwise("/find/form");
+
+	$stateProvider.state('find', {
+		url: "/find",
+		abstract: true,
+		controller: require('./js/components/find.js'),
+		template: require('./js/components/find.jade')
+	}).state('find.form', {
+		url: "/form",
+		controller: require('./js/components/find.form.js'),
+		template: require('./js/components/find.form.jade')
+	}).state('find.map', {
+		url: "/map",
+		controller: require('./js/components/find.map.js'),
+		template: require('./js/components/find.map.jade')
+	}).state('report', {
+		url: "/report",
+		controller: require('./js/components/report.js'),
+		template: require('./js/components/report.jade')
+	});
+})).directive.apply(_app$config, _toConsumableArray(require('./js/directives/map')));
+
+},{"./config":3,"./js/components/find.form.jade":5,"./js/components/find.form.js":6,"./js/components/find.jade":7,"./js/components/find.js":8,"./js/components/find.map.jade":9,"./js/components/find.map.js":10,"./js/components/report.jade":11,"./js/components/report.js":12,"./js/directives/map":13}],5:[function(require,module,exports){
+var jade = require("jade/runtime");
+
+module.exports = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<ion-content padding=\"true\"><button ui-sref=\"find.map\" class=\"button button-block button-positive\">Use Current Location</button><p style=\"text-align:center;\">OR</p><div class=\"list\"><label class=\"item item-input\"><input type=\"text\" placeholder=\"Location\"/></label></div><button ui-sref=\"find.map\" class=\"button button-block\">Find</button></ion-content>");;return buf.join("");
+};
+},{"jade/runtime":2}],6:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function ($scope, $ionicLoading) {};
+
+module.exports = exports["default"];
+
+},{}],7:[function(require,module,exports){
+var jade = require("jade/runtime");
+
+module.exports = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Find Incidents</h1><a ng-click=\"centerOnMe()\" class=\"button button-icon icon ion-navigate\"></a></ion-header-bar><ui-view></ui-view>");;return buf.join("");
+};
+},{"jade/runtime":2}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
-exports['default'] = ['MapCtrl', function ($scope, $ionicLoading) {
+
+exports['default'] = function ($scope, $ionicLoading) {
   $scope.mapCreated = function (map) {
     $scope.map = map;
   };
@@ -301,10 +370,53 @@ exports['default'] = ['MapCtrl', function ($scope, $ionicLoading) {
       alert('Unable to get location: ' + error.message);
     });
   };
-}];
+};
+
 module.exports = exports['default'];
 
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
+var jade = require("jade/runtime");
+
+module.exports = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<ion-content scroll=\"false\"><map on-create=\"mapCreated(map)\"></map></ion-content>");;return buf.join("");
+};
+},{"jade/runtime":2}],10:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function ($scope, $ionicLoading) {};
+
+module.exports = exports["default"];
+
+},{}],11:[function(require,module,exports){
+var jade = require("jade/runtime");
+
+module.exports = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Report Page</h1></ion-header-bar><ion-content><div class=\"list\"><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a></div></ion-content>");;return buf.join("");
+};
+},{"jade/runtime":2}],12:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function ($scope, $ionicLoading) {};
+
+module.exports = exports["default"];
+
+},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -344,32 +456,7 @@ exports['default'] = ['map', function () {
 }];
 module.exports = exports['default'];
 
-},{}],6:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, '__esModule', {
-  value: true
-});
-exports['default'] = ['test', function () {
-  return {
-    restrict: 'E',
-    scope: {},
-    template: require('../../templates/test.jade')
-  };
-}];
-module.exports = exports['default'];
-
-},{"../../templates/test.jade":7}],7:[function(require,module,exports){
-var jade = require("jade/runtime");
-
-module.exports = function template(locals) {
-var buf = [];
-var jade_mixins = {};
-var jade_interp;
-
-buf.push("<h1 class=\"title\">this is a test</h1>");;return buf.join("");
-};
-},{"jade/runtime":2}]},{},[3])
+},{}]},{},[4])
 
 
 //# sourceMappingURL=index.js.map

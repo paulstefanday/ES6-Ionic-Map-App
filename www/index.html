@@ -24,18 +24,12 @@
     <script src="build/index.js"></script>
   </head>
 
-  <body ng-app="starter" ng-controller="MapCtrl">
-    <ion-header-bar class="bar-stable">
-      <!-- <h1 class="title">Map</h1> -->
-      <test></test>
-    </ion-header-bar>
+  <body ng-app="map">
+    <ui-view></ui-view>
 
-    <ion-content scroll="false">
-      <map on-create="mapCreated(map)"></map>
-    </ion-content>
-
-    <ion-footer-bar class="bar-stable">
-      <a ng-click="centerOnMe()" class="button button-icon icon ion-navigate"></a>
-    </ion-footer-bar>
+    <ion-tabs class="tabs-icon-top">
+      <ion-tab title="Find" ui-sref="find.form" icon="ion-location"></ion-tab>
+      <ion-tab title="Report" ui-sref="report" icon="ion-android-alert"></ion-tab>
+    </ion-tabs>
   </body>
 </html>

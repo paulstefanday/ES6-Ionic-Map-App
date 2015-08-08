@@ -1,4 +1,4 @@
-export default ['MapCtrl', function($scope, $ionicLoading) {
+export default ($scope, $ionicLoading) => {
   $scope.mapCreated = function(map) {
     $scope.map = map;
   };
@@ -22,4 +22,4 @@ export default ['MapCtrl', function($scope, $ionicLoading) {
       alert('Unable to get location: ' + error.message);
     });
   };
-}]
+}
