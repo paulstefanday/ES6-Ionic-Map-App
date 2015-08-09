@@ -15,9 +15,11 @@ Simple accident recording tool
 
 
 ### Local Setup
-1. gulp js
-2. ionic serve
-3. ionic emulate ios
+1. sudo npm install -g ionic cordova
+2. sudo npm install
+3. gulp js
+4. ionic serve
+5. ionic emulate ios
 
 
 ### Done
@@ -27,9 +29,14 @@ Simple accident recording tool
 
 
 ### Left to do
-1. Facebook integration: https://ccoenraets.github.io/ionic-tutorial/ionic-facebook-integration.html http://ngcordova.com/
-2. In app deploy tests: https://apps.ionic.io
-3. Add angular deps annotation
-4. Add JWT
-5. Add realtime map feed
-6. Use local storage for offline data caching
+- Facebook integration: https://ccoenraets.github.io/ionic-tutorial/ionic-facebook-integration.html http://ngcordova.com/
+- In app deploy tests: https://apps.ionic.io
+- Add angular deps annotation
+- Add JWT
+- Add realtime map feed
+- Use local storage for offline data caching
+- Use Scss
+- Put marker on map for current location
+
+### Resources
+- Great google maps examples: https://github.com/googlemaps/js-samples
