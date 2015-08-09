@@ -1,4 +1,4 @@
-export default [ 'mapService', function($q, $state, $ionicLoading) {
+export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolocation) {
 
     this.pos = false
     this.loading = () => $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
@@ -9,7 +9,7 @@ export default [ 'mapService', function($q, $state, $ionicLoading) {
         let q = $q.defer();
         
         if(this.pos) q.resolve(this.pos);
-        else this.setCurrent().then(res => q.resolve(res.coords));
+        else this.setCurrent().then(res => q.resolve(res));
         
         return q.promise;
     }
@@ -19,16 +19,28 @@ export default [ 'mapService', function($q, $state, $ionicLoading) {
 
         this.loading();
 
-        navigator.geolocation.getCurrentPosition(pos => {
-            this.pos = pos;
-            $state.go('map');
-            this.loaded();
-            q.resolve(this.pos);
-        }, error => {
-            this.loaded();
-            alert('Unable to get location: ' + error.message);
-            q.reject(error);
-        });
+        // navigator.geolocation.getCurrentPosition(pos => {
+        //     this.pos = pos.coords;
+        //     this.loaded();
+        //     q.resolve(this.pos);
+        // }, error => {
+        //     this.loaded();
+        //     alert('Unable to get location: ' + error.message);
+        //     q.reject(error);
+        // });
+
+        $cordovaGeolocation
+            .getCurrentPosition({timeout: 10000, enableHighAccuracy: false})
+            .then(position => {
+                this.pos = {latitude: position.coords.latitude, longitude: position.coords.longitude};
+                this.loaded();
+                q.resolve(this.pos);
+            }, err => {
+                this.loaded();
+                alert('Unable to get location: ' + err.message);
+                q.reject(err)
+            });
+
 
         return q.promise;
     }

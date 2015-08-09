@@ -1,4 +1,4 @@
-const app = angular.module('map', ['ionic']);
+const app = angular.module('map', ['ionic', 'ngCordova']);
 require('./config')(app);
 
 app

@@ -37,7 +37,9 @@ Simple accident recording tool
 - Use local storage for offline data caching
 - Use Scss
 - Put marker on map for current location
-- Use native geoloc: http://ngcordova.com/docs/plugins/geolocation/
+- Use native geoloc: http://ngcordova.com/docs/plugins/geolocation/ (done but doesn't work properly)
+- Add loading screen
+- Back button on top nav
 
 ### Resources
 - Great google maps examples: https://github.com/googlemaps/js-samples

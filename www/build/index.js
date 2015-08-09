@@ -281,7 +281,7 @@ var _app$config$service, _app$config;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-var app = angular.module('map', ['ionic']);
+var app = angular.module('map', ['ionic', 'ngCordova']);
 require('./config')(app);
 
 (_app$config$service = (_app$config = app.config(function ($stateProvider, $urlRouterProvider) {
@@ -314,16 +314,18 @@ var jade_interp;
 buf.push("<ion-view animation=\"slide-left-right\"><ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Find Incidents</h1></ion-header-bar><ion-content padding=\"true\"><button ng-click=\"setCurrent()\" class=\"button button-block button-positive\">Use Current Location</button><p style=\"text-align:center;\">OR</p><div class=\"list\"><label class=\"item item-input\"><input type=\"text\" ng-model=\"loc\" placeholder=\"Location\"/></label></div><button ng-click=\"setCustom(loc)\" class=\"button button-block\">Find</button></ion-content></ion-view>");;return buf.join("");
 };
 },{"jade/runtime":2}],6:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
+Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-exports["default"] = function ($scope, mapService) {
+exports['default'] = function ($scope, mapService, $state) {
 
   $scope.setCurrent = function () {
-    mapService.getGeo();
+    mapService.getGeo().then(function (res) {
+      return $state.go('map');
+    });
   };
 
   $scope.setCustom = function (loc) {
@@ -331,7 +333,7 @@ exports["default"] = function ($scope, mapService) {
   };
 };
 
-module.exports = exports["default"];
+module.exports = exports['default'];
 
 },{}],7:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -423,7 +425,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-exports['default'] = ['mapService', function ($q, $state, $ionicLoading) {
+exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordovaGeolocation) {
     var _this = this;
 
     this.pos = false;
@@ -439,7 +441,7 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading) {
         var q = $q.defer();
 
         if (_this.pos) q.resolve(_this.pos);else _this.setCurrent().then(function (res) {
-            return q.resolve(res.coords);
+            return q.resolve(res);
         });
 
         return q.promise;
@@ -450,15 +452,24 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading) {
 
         _this.loading();
 
-        navigator.geolocation.getCurrentPosition(function (pos) {
-            _this.pos = pos;
-            $state.go('map');
+        // navigator.geolocation.getCurrentPosition(pos => {
+        //     this.pos = pos.coords;
+        //     this.loaded();
+        //     q.resolve(this.pos);
+        // }, error => {
+        //     this.loaded();
+        //     alert('Unable to get location: ' + error.message);
+        //     q.reject(error);
+        // });
+
+        $cordovaGeolocation.getCurrentPosition({ timeout: 10000, enableHighAccuracy: false }).then(function (position) {
+            _this.pos = { latitude: position.coords.latitude, longitude: position.coords.longitude };
             _this.loaded();
             q.resolve(_this.pos);
-        }, function (error) {
+        }, function (err) {
             _this.loaded();
-            alert('Unable to get location: ' + error.message);
-            q.reject(error);
+            alert('Unable to get location: ' + err.message);
+            q.reject(err);
         });
 
         return q.promise;
