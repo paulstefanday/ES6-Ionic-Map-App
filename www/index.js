@@ -4,24 +4,18 @@ require('./config')(app);
 app
 	.config(($stateProvider, $urlRouterProvider) => {
 
-	    $urlRouterProvider.otherwise("/find/form");
+	    $urlRouterProvider.otherwise("/find");
 
 	    $stateProvider
-	      .state('find', {
-	      	url: "/find",
-	        abstract: true,
+		  .state('find', {
+	        url: "/find",
 	        controller: require('./js/components/find.js'),
 	        template: require('./js/components/find.jade')
 	      })
-		  .state('find.form', {
-	        url: "/form",
-	        controller: require('./js/components/find.form.js'),
-	        template: require('./js/components/find.form.jade')
-	      })
-	      .state('find.map', {
+	      .state('map', {
 	        url: "/map",
-	        controller: require('./js/components/find.map.js'),
-	        template: require('./js/components/find.map.jade')
+	        controller: require('./js/components/map.js'),
+	        template: require('./js/components/map.jade')
 	      })
 	      .state('report', {
 	        url: "/report",
@@ -30,5 +24,6 @@ app
 	      })
 	})
 
+	.service(...require('./js/services/map'))
 	.directive(...require('./js/directives/map'))
 	;

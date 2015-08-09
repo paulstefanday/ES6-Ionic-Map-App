@@ -1,32 +1,29 @@
-export default [ 'map', function() {
+export default [ 'map', () => {
+  
   return {
     restrict: 'E',
-    scope: {
-      onCreate: '&'
+    scope: {},
+    controller: ($scope, mapService) => {
+      $scope.getGeo = mapService.getGeo;
     },
-    link: function ($scope, $element, $attr) {
-      function initialize() {
+    link: ($scope, $element, $attr) => {
+      var load = () => { $scope.getGeo().then(res => initialize(res, $element)) };
+      if (document.readyState === "complete") load();
+      else google.maps.event.addDomListener(window, 'load', load());
+    }
+  };
+
+  function initialize(res, el) {
+
+        console.log('init called', res)
+
         var mapOptions = {
-          center: new google.maps.LatLng(43.07493, -89.381388),
-          zoom: 16,
+          center: new google.maps.LatLng(res.latitude, res.longitude), zoom: 16,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map($element[0], mapOptions);
-  
-        $scope.onCreate({map: map});
+        var map = new google.maps.Map(el[0], mapOptions);
 
         // Stop the side bar from dragging when mousedown/tapdown on the map
-        google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
-          e.preventDefault();
-          return false;
-        });
-      }
-
-      if (document.readyState === "complete") {
-        initialize();
-      } else {
-        google.maps.event.addDomListener(window, 'load', initialize);
-      }
+        google.maps.event.addDomListener(el[0], 'mousedown', e => { e.preventDefault(); return false; });
     }
-  }
 }]

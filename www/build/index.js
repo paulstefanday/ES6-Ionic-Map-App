@@ -277,38 +277,33 @@ module.exports = exports["default"];
 },{}],4:[function(require,module,exports){
 'use strict';
 
-var _app$config;
+var _app$config$service, _app$config;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 var app = angular.module('map', ['ionic']);
 require('./config')(app);
 
-(_app$config = app.config(function ($stateProvider, $urlRouterProvider) {
+(_app$config$service = (_app$config = app.config(function ($stateProvider, $urlRouterProvider) {
 
-	$urlRouterProvider.otherwise("/find/form");
+	$urlRouterProvider.otherwise("/find");
 
 	$stateProvider.state('find', {
 		url: "/find",
-		abstract: true,
 		controller: require('./js/components/find.js'),
 		template: require('./js/components/find.jade')
-	}).state('find.form', {
-		url: "/form",
-		controller: require('./js/components/find.form.js'),
-		template: require('./js/components/find.form.jade')
-	}).state('find.map', {
+	}).state('map', {
 		url: "/map",
-		controller: require('./js/components/find.map.js'),
-		template: require('./js/components/find.map.jade')
+		controller: require('./js/components/map.js'),
+		template: require('./js/components/map.jade')
 	}).state('report', {
 		url: "/report",
 		controller: require('./js/components/report.js'),
 		template: require('./js/components/report.jade')
 	});
-})).directive.apply(_app$config, _toConsumableArray(require('./js/directives/map')));
+})).service.apply(_app$config, _toConsumableArray(require('./js/services/map')))).directive.apply(_app$config$service, _toConsumableArray(require('./js/directives/map')));
 
-},{"./config":3,"./js/components/find.form.jade":5,"./js/components/find.form.js":6,"./js/components/find.jade":7,"./js/components/find.js":8,"./js/components/find.map.jade":9,"./js/components/find.map.js":10,"./js/components/report.jade":11,"./js/components/report.js":12,"./js/directives/map":13}],5:[function(require,module,exports){
+},{"./config":3,"./js/components/find.jade":5,"./js/components/find.js":6,"./js/components/map.jade":7,"./js/components/map.js":8,"./js/components/report.jade":9,"./js/components/report.js":10,"./js/directives/map":11,"./js/services/map":12}],5:[function(require,module,exports){
 var jade = require("jade/runtime");
 
 module.exports = function template(locals) {
@@ -316,7 +311,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<ion-content padding=\"true\"><button ui-sref=\"find.map\" class=\"button button-block button-positive\">Use Current Location</button><p style=\"text-align:center;\">OR</p><div class=\"list\"><label class=\"item item-input\"><input type=\"text\" placeholder=\"Location\"/></label></div><button ui-sref=\"find.map\" class=\"button button-block\">Find</button></ion-content>");;return buf.join("");
+buf.push("<ion-view animation=\"slide-left-right\"><ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Find Incidents</h1></ion-header-bar><ion-content padding=\"true\"><button ng-click=\"setCurrent()\" class=\"button button-block button-positive\">Use Current Location</button><p style=\"text-align:center;\">OR</p><div class=\"list\"><label class=\"item item-input\"><input type=\"text\" ng-model=\"loc\" placeholder=\"Location\"/></label></div><button ng-click=\"setCustom(loc)\" class=\"button button-block\">Find</button></ion-content></ion-view>");;return buf.join("");
 };
 },{"jade/runtime":2}],6:[function(require,module,exports){
 "use strict";
@@ -325,7 +320,16 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports["default"] = function ($scope, $ionicLoading) {};
+exports["default"] = function ($scope, mapService) {
+
+  $scope.setCurrent = function () {
+    mapService.getGeo();
+  };
+
+  $scope.setCustom = function (loc) {
+    mapService.setCustom(loc);
+  };
+};
 
 module.exports = exports["default"];
 
@@ -337,42 +341,18 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Find Incidents</h1><a ng-click=\"centerOnMe()\" class=\"button button-icon icon ion-navigate\"></a></ion-header-bar><ui-view></ui-view>");;return buf.join("");
+buf.push("<ion-view animation=\"slide-left-right\"><ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Incidents Map</h1></ion-header-bar><ion-content scroll=\"false\"><map></map></ion-content></ion-view>");;return buf.join("");
 };
 },{"jade/runtime":2}],8:[function(require,module,exports){
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports['default'] = function ($scope, $ionicLoading) {
-  $scope.mapCreated = function (map) {
-    $scope.map = map;
-  };
+exports["default"] = function ($scope, $ionicLoading) {};
 
-  $scope.centerOnMe = function () {
-    console.log("Centering");
-    if (!$scope.map) {
-      return;
-    }
-
-    $scope.loading = $ionicLoading.show({
-      content: 'Getting current location...',
-      showBackdrop: false
-    });
-
-    navigator.geolocation.getCurrentPosition(function (pos) {
-      console.log('Got pos', pos);
-      $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
-      $scope.loading.hide();
-    }, function (error) {
-      alert('Unable to get location: ' + error.message);
-    });
-  };
-};
-
-module.exports = exports['default'];
+module.exports = exports["default"];
 
 },{}],9:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -382,7 +362,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<ion-content scroll=\"false\"><map on-create=\"mapCreated(map)\"></map></ion-content>");;return buf.join("");
+buf.push("<ion-view animation=\"slide-left-right\"><ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Report Incidents</h1></ion-header-bar><ion-content padding=\"true\"><button ui-sref=\"find\" class=\"button button-block button-positive\">Connect with facebook</button><p style=\"text-align:center;\">OR</p><div class=\"list\"><label class=\"item item-input\"><input type=\"text\" placeholder=\"Email\"/></label></div><button ui-sref=\"find\" class=\"button button-block\">Join with Email</button></ion-content></ion-view>");;return buf.join("");
 };
 },{"jade/runtime":2}],10:[function(require,module,exports){
 "use strict";
@@ -396,63 +376,108 @@ exports["default"] = function ($scope, $ionicLoading) {};
 module.exports = exports["default"];
 
 },{}],11:[function(require,module,exports){
-var jade = require("jade/runtime");
-
-module.exports = function template(locals) {
-var buf = [];
-var jade_mixins = {};
-var jade_interp;
-
-buf.push("<ion-header-bar class=\"bar-stable\"><h1 class=\"title\">Report Page</h1></ion-header-bar><ion-content><div class=\"list\"><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a><a href=\"#\" class=\"item\">Test</a></div></ion-content>");;return buf.join("");
-};
-},{"jade/runtime":2}],12:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports["default"] = function ($scope, $ionicLoading) {};
-
-module.exports = exports["default"];
-
-},{}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
   value: true
 });
 exports['default'] = ['map', function () {
+
   return {
     restrict: 'E',
-    scope: {
-      onCreate: '&'
+    scope: {},
+    controller: function controller($scope, mapService) {
+      $scope.getGeo = mapService.getGeo;
     },
     link: function link($scope, $element, $attr) {
-      function initialize() {
-        var mapOptions = {
-          center: new google.maps.LatLng(43.07493, -89.381388),
-          zoom: 16,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        var map = new google.maps.Map($element[0], mapOptions);
-
-        $scope.onCreate({ map: map });
-
-        // Stop the side bar from dragging when mousedown/tapdown on the map
-        google.maps.event.addDomListener($element[0], 'mousedown', function (e) {
-          e.preventDefault();
-          return false;
+      var load = function load() {
+        $scope.getGeo().then(function (res) {
+          return initialize(res, $element);
         });
-      }
-
-      if (document.readyState === "complete") {
-        initialize();
-      } else {
-        google.maps.event.addDomListener(window, 'load', initialize);
-      }
+      };
+      if (document.readyState === "complete") load();else google.maps.event.addDomListener(window, 'load', load());
     }
   };
+
+  function initialize(res, el) {
+
+    console.log('init called', res);
+
+    var mapOptions = {
+      center: new google.maps.LatLng(res.latitude, res.longitude), zoom: 16,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(el[0], mapOptions);
+
+    // Stop the side bar from dragging when mousedown/tapdown on the map
+    google.maps.event.addDomListener(el[0], 'mousedown', function (e) {
+      e.preventDefault();return false;
+    });
+  }
+}];
+module.exports = exports['default'];
+
+},{}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+exports['default'] = ['mapService', function ($q, $state, $ionicLoading) {
+    var _this = this;
+
+    this.pos = false;
+    this.loading = function () {
+        return $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
+    };
+    this.loaded = function () {
+        return $ionicLoading.hide();
+    };
+    ;
+
+    this.getGeo = function () {
+        var q = $q.defer();
+
+        if (_this.pos) q.resolve(_this.pos);else _this.setCurrent().then(function (res) {
+            return q.resolve(res.coords);
+        });
+
+        return q.promise;
+    };
+
+    this.setCurrent = function () {
+        var q = $q.defer();
+
+        _this.loading();
+
+        navigator.geolocation.getCurrentPosition(function (pos) {
+            _this.pos = pos;
+            $state.go('map');
+            _this.loaded();
+            q.resolve(_this.pos);
+        }, function (error) {
+            _this.loaded();
+            alert('Unable to get location: ' + error.message);
+            q.reject(error);
+        });
+
+        return q.promise;
+    };
+
+    this.setCustom = function (loc) {
+
+        _this.loading();
+
+        var geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ 'address': loc, 'partialmatch': true }, function (results, status) {
+            _this.loaded();
+            if (status == 'OK' && results.length > 0) {
+                _this.pos = { latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K };
+                $state.go('map');
+            } else alert("Geocode was not successful for the following reason: " + status);
+        });
+    };
 }];
 module.exports = exports['default'];
 

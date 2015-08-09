@@ -1,10 +1,28 @@
-ion-header-bar.bar-stable
-	h1.title Report Page
+ion-view(animation="slide-left-right")
+	ion-header-bar.bar-stable
+		h1.title Report Incidents
 
-ion-content
-	.list
-		a.item(href="#") Test
-		a.item(href="#") Test
-		a.item(href="#") Test
-		a.item(href="#") Test
-		a.item(href="#") Test
+	ion-content(padding="true")
+
+		button.button.button-block.button-positive(ui-sref="find") Connect with facebook
+
+		p(style="text-align:center;") OR
+		
+		.list
+			label.item.item-input
+					input( type="text" placeholder="Email" )
+
+		button.button.button-block(ui-sref="find") Join with Email
+
+
+	//- ion-content(padding="true")
+
+	//- 	button.button.button-block.button-positive(ui-sref="find.map") Report incident at current location
+
+	//- 	p(style="text-align:center;") OR
+		
+	//- 	.list
+	//- 		label.item.item-input
+	//- 				input( type="text" placeholder="Address" )
+
+	//- 	button.button.button-block(ui-sref="find.map") Report at address
