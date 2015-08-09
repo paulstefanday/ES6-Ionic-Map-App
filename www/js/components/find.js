@@ -5,7 +5,7 @@ export default ($scope, mapService, $state) => {
   }
 
   $scope.setCustom = (loc) => {
-  	mapService.setCustom(loc);
+  	mapService.setCustom(loc).then(res => $state.go('map'));
   }
   
 }

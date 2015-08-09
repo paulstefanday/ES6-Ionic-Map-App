@@ -329,7 +329,9 @@ exports['default'] = function ($scope, mapService, $state) {
   };
 
   $scope.setCustom = function (loc) {
-    mapService.setCustom(loc);
+    mapService.setCustom(loc).then(function (res) {
+      return $state.go('map');
+    });
   };
 };
 
@@ -403,12 +405,11 @@ exports['default'] = ['map', function () {
 
   function initialize(res, el) {
 
-    console.log('init called', res);
-
     var mapOptions = {
       center: new google.maps.LatLng(res.latitude, res.longitude), zoom: 16,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
+
     var map = new google.maps.Map(el[0], mapOptions);
 
     // Stop the side bar from dragging when mousedown/tapdown on the map
@@ -435,7 +436,6 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
     this.loaded = function () {
         return $ionicLoading.hide();
     };
-    ;
 
     this.getGeo = function () {
         var q = $q.defer();
@@ -449,18 +449,7 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
 
     this.setCurrent = function () {
         var q = $q.defer();
-
         _this.loading();
-
-        // navigator.geolocation.getCurrentPosition(pos => {
-        //     this.pos = pos.coords;
-        //     this.loaded();
-        //     q.resolve(this.pos);
-        // }, error => {
-        //     this.loaded();
-        //     alert('Unable to get location: ' + error.message);
-        //     q.reject(error);
-        // });
 
         $cordovaGeolocation.getCurrentPosition({ timeout: 10000, enableHighAccuracy: false }).then(function (position) {
             _this.pos = { latitude: position.coords.latitude, longitude: position.coords.longitude };
@@ -478,18 +467,33 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
     this.setCustom = function (loc) {
 
         _this.loading();
-
-        var geocoder = new google.maps.Geocoder();
+        var geocoder = new google.maps.Geocoder(),
+            q = $q.defer();
 
         geocoder.geocode({ 'address': loc, 'partialmatch': true }, function (results, status) {
             _this.loaded();
             if (status == 'OK' && results.length > 0) {
                 _this.pos = { latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K };
-                $state.go('map');
-            } else alert("Geocode was not successful for the following reason: " + status);
+                q.resolve(_this.pos);
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+                q.reject(status);
+            }
         });
+
+        return q.promise;
     };
 }];
+
+// navigator.geolocation.getCurrentPosition(pos => {
+//     this.pos = pos.coords;
+//     this.loaded();
+//     q.resolve(this.pos);
+// }, error => {
+//     this.loaded();
+//     alert('Unable to get location: ' + error.message);
+//     q.reject(error);
+// });
 module.exports = exports['default'];
 
 },{}]},{},[4])

@@ -15,12 +15,11 @@ export default [ 'map', () => {
 
   function initialize(res, el) {
 
-        console.log('init called', res)
-
         var mapOptions = {
           center: new google.maps.LatLng(res.latitude, res.longitude), zoom: 16,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
+        
         var map = new google.maps.Map(el[0], mapOptions);
 
         // Stop the side bar from dragging when mousedown/tapdown on the map

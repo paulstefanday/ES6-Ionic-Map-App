@@ -1,9 +1,8 @@
 export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolocation, $cordovaSpinnerDialog) {
 
-    this.pos = false
+    this.pos = false;
     this.loading = () => $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
     this.loaded = () => $ionicLoading.hide();
-    ;
 
     this.getGeo = () => {
         let q = $q.defer();
@@ -16,18 +15,7 @@ export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolo
 
     this.setCurrent = () => {
         let q = $q.defer();
-
         this.loading();
-
-        // navigator.geolocation.getCurrentPosition(pos => {
-        //     this.pos = pos.coords;
-        //     this.loaded();
-        //     q.resolve(this.pos);
-        // }, error => {
-        //     this.loaded();
-        //     alert('Unable to get location: ' + error.message);
-        //     q.reject(error);
-        // });
 
         $cordovaGeolocation
             .getCurrentPosition({timeout: 10000, enableHighAccuracy: false})
@@ -41,28 +29,43 @@ export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolo
                 q.reject(err)
             });
 
-
         return q.promise;
     }
 
     this.setCustom = loc => {
 
         this.loading();
-
-        let geocoder = new google.maps.Geocoder();
+        let geocoder = new google.maps.Geocoder(),
+            q = $q.defer();
 
         geocoder.geocode({ 'address': loc, 'partialmatch': true }, 
             (results, status) => {
                 this.loaded();
                 if (status == 'OK' && results.length > 0) {
                     this.pos = {latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K};
-                    $state.go('map');
+                    q.resolve(this.pos);
                 }
-                else alert("Geocode was not successful for the following reason: " + status);
+                else  {
+                    alert("Geocode was not successful for the following reason: " + status);
+                    q.reject(status);
+                }
             }
         ); 
+
+        return q.promise;
 
     }
  
 
 }]
+
+
+        // navigator.geolocation.getCurrentPosition(pos => {
+        //     this.pos = pos.coords;
+        //     this.loaded();
+        //     q.resolve(this.pos);
+        // }, error => {
+        //     this.loaded();
+        //     alert('Unable to get location: ' + error.message);
+        //     q.reject(error);
+        // });
