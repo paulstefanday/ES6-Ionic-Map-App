@@ -3,7 +3,7 @@ export default [ 'map', () => {
   return {
     restrict: 'E',
     scope: {},
-    controller: ($scope, mapService) => {
+    controller: /*@ngInject*/($scope, mapService) => {
       $scope.getGeo = mapService.getGeo;
     },
     link: ($scope, $element, $attr) => {

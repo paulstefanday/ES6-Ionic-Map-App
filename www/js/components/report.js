@@ -1,3 +1,3 @@
-export default ($scope, $ionicLoading) => {
+export default /*@ngInject*/($scope, $ionicLoading) => {
   
 }

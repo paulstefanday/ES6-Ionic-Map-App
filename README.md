@@ -29,12 +29,10 @@ Simple accident recording tool
 
 
 ### Left to do
+- In app deploy tests: https://apps.ionic.io, http://docs.ionic.io/v1.0/docs/deploy-deploying-updates http://docs.ionic.io/v1.0/docs/deploy-from-scratch
 - Facebook integration: https://ccoenraets.github.io/ionic-tutorial/ionic-facebook-integration.html http://ngcordova.com/
-- In app deploy tests: https://apps.ionic.io
-- Add angular deps annotation
 - Add JWT
 - Add realtime map feed
-- Use local storage for offline data caching
 - Use Scss
 - Put marker on map for current location
 - Use native geoloc: http://ngcordova.com/docs/plugins/geolocation/ (done but doesn't work properly)

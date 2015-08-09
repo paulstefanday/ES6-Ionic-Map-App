@@ -1,8 +1,10 @@
-const app = angular.module('map', ['ionic', 'ngCordova']);
+const app = angular.module('map', ['ionic', 'ngCordova', 'angular-cache']);
 require('./config')(app);
 
 app
-	.config(($stateProvider, $urlRouterProvider) => {
+	.config(/*@ngInject*/($stateProvider, $urlRouterProvider, CacheFactoryProvider) => {
+
+		angular.extend(CacheFactoryProvider.defaults, { maxAge: 15 * 60 * 10000, storageMode: 'localStorage' });
 
 	    $urlRouterProvider.otherwise("/find");
 

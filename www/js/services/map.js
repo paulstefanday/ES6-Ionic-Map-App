@@ -1,9 +1,13 @@
-export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolocation, $cordovaSpinnerDialog) {
-
+export default [ 'mapService', /*@ngInject*/function($q, $state, $ionicLoading, $cordovaGeolocation, CacheFactory) {
+    
+    // Vars
+    this.mapCache = CacheFactory('mapCache');
+    this.oldPos = this.mapCache.get('pos') || false;
     this.pos = false;
     this.loading = () => $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
     this.loaded = () => $ionicLoading.hide();
 
+    // Functions
     this.getGeo = () => {
         let q = $q.defer();
         
@@ -20,8 +24,7 @@ export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolo
         $cordovaGeolocation
             .getCurrentPosition({timeout: 10000, enableHighAccuracy: false})
             .then(position => {
-                this.pos = {latitude: position.coords.latitude, longitude: position.coords.longitude};
-                this.loaded();
+                this.setPos({latitude: position.coords.latitude, longitude: position.coords.longitude});
                 q.resolve(this.pos);
             }, err => {
                 this.loaded();
@@ -40,12 +43,13 @@ export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolo
 
         geocoder.geocode({ 'address': loc, 'partialmatch': true }, 
             (results, status) => {
-                this.loaded();
+
                 if (status == 'OK' && results.length > 0) {
-                    this.pos = {latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K};
+                    this.setPos({latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K});
                     q.resolve(this.pos);
                 }
                 else  {
+                    this.loaded();
                     alert("Geocode was not successful for the following reason: " + status);
                     q.reject(status);
                 }
@@ -54,6 +58,12 @@ export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolo
 
         return q.promise;
 
+    }
+
+    this.setPos = pos => {
+        this.pos = pos;
+        this.mapCache.put('pos', pos);
+        this.loaded();
     }
  
 

@@ -265,11 +265,11 @@ Object.defineProperty(exports, "__esModule", {
 
 exports["default"] = function (app) {
 
-  app.run(function ($ionicPlatform) {
+  app.run(["$ionicPlatform", function ($ionicPlatform) {
     $ionicPlatform.ready(function () {
       if (window.StatusBar) StatusBar.styleDefault();
     });
-  });
+  }]);
 };
 
 module.exports = exports["default"];
@@ -281,10 +281,12 @@ var _app$config$service, _app$config;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-var app = angular.module('map', ['ionic', 'ngCordova']);
+var app = angular.module('map', ['ionic', 'ngCordova', 'angular-cache']);
 require('./config')(app);
 
-(_app$config$service = (_app$config = app.config(function ($stateProvider, $urlRouterProvider) {
+(_app$config$service = (_app$config = app.config( /*@ngInject*/["$stateProvider", "$urlRouterProvider", "CacheFactoryProvider", function ($stateProvider, $urlRouterProvider, CacheFactoryProvider) {
+
+	angular.extend(CacheFactoryProvider.defaults, { maxAge: 15 * 60 * 10000, storageMode: 'localStorage' });
 
 	$urlRouterProvider.otherwise("/find");
 
@@ -301,7 +303,7 @@ require('./config')(app);
 		controller: require('./js/components/report.js'),
 		template: require('./js/components/report.jade')
 	});
-})).service.apply(_app$config, _toConsumableArray(require('./js/services/map')))).directive.apply(_app$config$service, _toConsumableArray(require('./js/directives/map')));
+}])).service.apply(_app$config, _toConsumableArray(require('./js/services/map')))).directive.apply(_app$config$service, _toConsumableArray(require('./js/directives/map')));
 
 },{"./config":3,"./js/components/find.jade":5,"./js/components/find.js":6,"./js/components/map.jade":7,"./js/components/map.js":8,"./js/components/report.jade":9,"./js/components/report.js":10,"./js/directives/map":11,"./js/services/map":12}],5:[function(require,module,exports){
 var jade = require("jade/runtime");
@@ -320,7 +322,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 });
 
-exports['default'] = function ($scope, mapService, $state) {
+exports['default'] = /*@ngInject*/["$scope", "mapService", "$state", function ($scope, mapService, $state) {
 
   $scope.setCurrent = function () {
     mapService.getGeo().then(function (res) {
@@ -333,7 +335,7 @@ exports['default'] = function ($scope, mapService, $state) {
       return $state.go('map');
     });
   };
-};
+}];
 
 module.exports = exports['default'];
 
@@ -354,7 +356,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports["default"] = function ($scope, $ionicLoading) {};
+exports["default"] = /*@ngInject*/["$scope", "$ionicLoading", function ($scope, $ionicLoading) {}];
 
 module.exports = exports["default"];
 
@@ -375,7 +377,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports["default"] = function ($scope, $ionicLoading) {};
+exports["default"] = /*@ngInject*/["$scope", "$ionicLoading", function ($scope, $ionicLoading) {}];
 
 module.exports = exports["default"];
 
@@ -390,9 +392,9 @@ exports['default'] = ['map', function () {
   return {
     restrict: 'E',
     scope: {},
-    controller: function controller($scope, mapService) {
+    controller: /*@ngInject*/["$scope", "mapService", function controller($scope, mapService) {
       $scope.getGeo = mapService.getGeo;
-    },
+    }],
     link: function link($scope, $element, $attr) {
       var load = function load() {
         $scope.getGeo().then(function (res) {
@@ -426,9 +428,12 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordovaGeolocation, $cordovaSpinnerDialog) {
+exports['default'] = ['mapService', /*@ngInject*/["$q", "$state", "$ionicLoading", "$cordovaGeolocation", "CacheFactory", function ($q, $state, $ionicLoading, $cordovaGeolocation, CacheFactory) {
     var _this = this;
 
+    // Vars
+    this.mapCache = CacheFactory('mapCache');
+    this.oldPos = this.mapCache.get('pos') || false;
     this.pos = false;
     this.loading = function () {
         return $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
@@ -437,6 +442,7 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
         return $ionicLoading.hide();
     };
 
+    // Functions
     this.getGeo = function () {
         var q = $q.defer();
 
@@ -452,8 +458,7 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
         _this.loading();
 
         $cordovaGeolocation.getCurrentPosition({ timeout: 10000, enableHighAccuracy: false }).then(function (position) {
-            _this.pos = { latitude: position.coords.latitude, longitude: position.coords.longitude };
-            _this.loaded();
+            _this.setPos({ latitude: position.coords.latitude, longitude: position.coords.longitude });
             q.resolve(_this.pos);
         }, function (err) {
             _this.loaded();
@@ -471,11 +476,12 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
             q = $q.defer();
 
         geocoder.geocode({ 'address': loc, 'partialmatch': true }, function (results, status) {
-            _this.loaded();
+
             if (status == 'OK' && results.length > 0) {
-                _this.pos = { latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K };
+                _this.setPos({ latitude: results[0].geometry.location.G, longitude: results[0].geometry.location.K });
                 q.resolve(_this.pos);
             } else {
+                _this.loaded();
                 alert("Geocode was not successful for the following reason: " + status);
                 q.reject(status);
             }
@@ -483,7 +489,13 @@ exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordov
 
         return q.promise;
     };
-}];
+
+    this.setPos = function (pos) {
+        _this.pos = pos;
+        _this.mapCache.put('pos', pos);
+        _this.loaded();
+    };
+}]];
 
 // navigator.geolocation.getCurrentPosition(pos => {
 //     this.pos = pos.coords;
@@ -499,4 +511,4 @@ module.exports = exports['default'];
 },{}]},{},[4])
 
 
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=app.js.map
