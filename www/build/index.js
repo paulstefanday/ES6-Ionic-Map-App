@@ -425,7 +425,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
-exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordovaGeolocation) {
+exports['default'] = ['mapService', function ($q, $state, $ionicLoading, $cordovaGeolocation, $cordovaSpinnerDialog) {
     var _this = this;
 
     this.pos = false;

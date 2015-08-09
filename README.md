@@ -40,6 +40,7 @@ Simple accident recording tool
 - Use native geoloc: http://ngcordova.com/docs/plugins/geolocation/ (done but doesn't work properly)
 - Add loading screen
 - Back button on top nav
+- Style better
 
 ### Resources
 - Great google maps examples: https://github.com/googlemaps/js-samples

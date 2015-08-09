@@ -1,4 +1,4 @@
-export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolocation) {
+export default [ 'mapService', function($q, $state, $ionicLoading, $cordovaGeolocation, $cordovaSpinnerDialog) {
 
     this.pos = false
     this.loading = () => $ionicLoading.show({ content: 'Getting current location...', showBackdrop: true });
